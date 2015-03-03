@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'fileutils'
+require 'json'
 
 require_relative 'bootstrap'
 
@@ -15,3 +16,12 @@ post "/api/tournament/:tournament_id/team/:repo_name/log" do
   end
 end
 
+get "/api/tournament/:tournament_id/team/:repo_name/log" do
+  JSON.generate Dir["logs/#{params['tournament_id']}/#{params[:repo_name]}/"]
+end
+
+get "/api/tournament/:tournament_id/team/:repo_name/log/:filename" do
+  directory = "logs/#{params['tournament_id']}/#{params[:repo_name]}/"
+  filename = directory + "#{params[:filename]}"
+  File.read(filename)
+end
