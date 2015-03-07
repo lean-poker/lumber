@@ -5,7 +5,7 @@ require 'json'
 require_relative 'bootstrap'
 
 post "/api/tournament/:tournament_id/team/:repo_name/log" do
-  timestamp = Time.new.strftime("%Y%m%d%M")
+  timestamp = Time.new.strftime("%Y%m%d%H%M")
   directory = "logs/#{params['tournament_id']}/#{params[:repo_name]}/"
   filename = directory + "#{timestamp}.log"
   data = request.body.read
