@@ -51,4 +51,11 @@ RSpec.describe 'LogStore' do
     expect(@store.list 'my/logs').to eq(%w(1 2))
     expect(@store.list 'm'      ).to eq([])
   end
+
+  it 'should list entries in alphabetical order' do
+    @store.put 'z', '1'
+    @store.put 'k', '2'
+    @store.put 'a', '3'
+    expect(@store.list).to eq(%w(a k z))
+  end
 end

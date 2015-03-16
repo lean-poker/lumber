@@ -21,7 +21,7 @@ class LogStore
     @values.keys.select{ |k| k.start_with? prefix }.map do |k|
       rel_path = k.gsub(/^#{prefix}/, '')
       rel_path[0..(rel_path.index('/') || 0) - 1]
-    end.uniq
+    end.sort.uniq
   end
 
   def self.instance
