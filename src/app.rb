@@ -2,25 +2,30 @@ require 'sinatra'
 require 'fileutils'
 require 'json'
 
-require_relative 'bootstrap'
+require_relative 'log_store'
 
-post "/api/tournament/:tournament_id/team/:repo_name/log" do
-  timestamp = Time.new.strftime("%Y%m%d%H%M")
-  directory = "logs/#{params['tournament_id']}/#{params[:repo_name]}/"
-  filename = directory + "#{timestamp}.log"
+post "/logs/*" do
+  path = params[:splat][0]
   data = request.body.read
 
-  FileUtils.mkdir_p directory
-  open(filename, 'a') do |f|
-    f.write data
-  end
+  LogStore.instance.append path, data
   ''
 end
 
-get "/api/tournament/:tournament_id/team/:repo_name/log" do
-  headers "Content-Type" => "text/plane; charset=utf8"
-  files = Dir["logs/#{params['tournament_id']}/#{params[:repo_name]}/*"].sort_by { |x| File.mtime(x) }
-  files.last(3).map do |filename|
-    File.read(filename)
-  end.join('')
+get "/logs/*" do
+  path = params[:splat][0]
+
+  log = LogStore.instance.get path
+
+  if log == nil
+    status 404
+    'Entry not found!'
+  else
+    headers "Content-Type" => "text/plain; charset=utf8"
+    log
+  end
+end
+
+get '/*' do
+  redirect '/logs/'
 end
