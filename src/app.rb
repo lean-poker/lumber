@@ -18,10 +18,20 @@ get "/logs/*" do
   log = LogStore.instance.get path
 
   if log == nil
-    status 404
-    'Entry not found!'
+    list = LogStore.instance.list path
+
+    if list.length > 0
+      headers 'Content-Type' => 'text/html; charset=utf8'
+      erb :list, :locals => {
+              :path => (path.length == 0 or path.end_with?('/')) ? path : "#{path}/",
+              :items => list
+          }
+    else
+      status 404
+      'Entry not found!'
+    end
   else
-    headers "Content-Type" => "text/plain; charset=utf8"
+    headers 'Content-Type' => 'text/plain; charset=utf8'
     log
   end
 end
