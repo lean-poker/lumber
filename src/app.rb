@@ -3,6 +3,11 @@ require 'fileutils'
 require 'json'
 
 require_relative 'log_store'
+require_relative 'zlib_compressor'
+
+configure do
+  LogStore.instance.compressor = ZlibCompressor.new
+end
 
 post "/logs/*" do
   path = params[:splat][0]
