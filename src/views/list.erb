@@ -1,0 +1,12 @@
+<html>
+<head><title>Listing logs/<%= path %></title></head>
+<body>
+
+<h1>logs/<%= path %></h1>
+
+<% items.sort_by { |a, b| a <=> b }.each do |item| %>
+    <a href="/logs/<%= path %><%= item %>"><%= item %></a><br/>
+<% end %>
+
+</body>
+</html>
