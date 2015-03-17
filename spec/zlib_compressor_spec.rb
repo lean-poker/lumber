@@ -1,7 +1,7 @@
 require 'rspec'
 require_relative '../src/zlib_compressor'
 
-RSpec.describe do
+RSpec.describe 'ZlibCompressor' do
   it 'should be able to compress and decompress' do
     compressor = ZlibCompressor.new
     value = 'this value is here to be compressed'
