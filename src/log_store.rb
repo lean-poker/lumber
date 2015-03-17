@@ -1,19 +1,23 @@
 
 class LogStore
-  def initialize
+  attr_accessor :compressor
+
+  def initialize(compressor = nil)
     @values = Hash.new ''
+
+    @compressor = compressor || LogStoreDefaultCompressor.new
   end
 
   def get(key)
-    @values.has_key?(key.to_s) ? @values[key.to_s] : nil
+    @values.has_key?(key.to_s) ? @compressor.decompress(@values[key.to_s]) : nil
   end
 
   def put(key, value)
-    @values[key.to_s] = value
+    @values[key.to_s] = @compressor.compress(value)
   end
 
   def append(key, value)
-    @values[key.to_s] += value
+    @values[key.to_s] = @compressor.compress(@compressor.decompress(@values[key.to_s]) + value)
   end
 
   def list(key = '')
@@ -26,5 +30,15 @@ class LogStore
 
   def self.instance
     @instance ||= LogStore.new
+  end
+end
+
+class LogStoreDefaultCompressor
+  def compress(value)
+    value
+  end
+
+  def decompress(value)
+    value
   end
 end

@@ -58,4 +58,16 @@ RSpec.describe 'LogStore' do
     @store.put 'a', '3'
     expect(@store.list).to eq(%w(a k z))
   end
+
+  it 'should support compressors' do
+    compressor = double('compressor')
+    expect(compressor).to receive(:compress).once.with('log entry').and_return('lgntry')
+    expect(compressor).to receive(:decompress).once.with('lgntry').and_return('log entry')
+    expect(compressor).to receive(:compress).once.with('log entry appended').and_return('lgntrypnd')
+    expect(compressor).to receive(:decompress).once.with('lgntrypnd').and_return('log entry appended')
+    @store.compressor = compressor
+    @store.put 'a', 'log entry'
+    @store.append 'a', ' appended'
+    @store.get 'a'
+  end
 end
