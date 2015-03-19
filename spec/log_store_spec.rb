@@ -34,13 +34,6 @@ RSpec.describe 'LogStore' do
     expect(@store.get :another_test_key).to eq('value')
   end
 
-  it 'should provide an instance' do
-    instance = LogStore.instance
-    expect(instance).not_to eq(nil)
-    expect(instance).to eq(LogStore.instance)
-    instance.append 'shit', 'shit'
-  end
-
   it 'should be able to list entries' do
     @store.put 'my/logs/1', 'test_log'
     @store.put 'my/logs/2', 'another_test_log'
@@ -59,6 +52,17 @@ RSpec.describe 'LogStore' do
     expect(@store.list).to eq(%w(a k z))
   end
 
+  it 'should use passed cache to store values' do
+    cache = double('cache')
+    expect(cache).to receive(:has_key?).with('key').and_return(true)
+    expect(cache).to receive(:get).with('key').and_return('another-value')
+    expect(cache).to receive(:put).with('key', 'value')
+
+    @store = LogStore.new LogStoreDefaultCompressor.new, cache
+    @store.put 'key', 'value'
+    expect(@store.get 'key').to eq('another-value')
+  end
+
   it 'should support compressors' do
     compressor = double('compressor')
     expect(compressor).to receive(:compress).once.with('log entry').and_return('lgntry')
@@ -69,5 +73,22 @@ RSpec.describe 'LogStore' do
     @store.put 'a', 'log entry'
     @store.append 'a', ' appended'
     @store.get 'a'
+  end
+
+  it 'should provide an instance' do
+    instance = LogStore.instance
+    expect(instance).not_to eq(nil)
+    expect(instance).to eq(LogStore.instance)
+    instance.append 'shit', 'shit'
+  end
+
+  it 'should be able to replace default instance' do
+    instance = LogStore.instance
+    instance2 = LogStore.new_instance nil, nil
+    instance3 = LogStore.instance
+
+    expect(instance2).not_to eq(instance)
+    expect(instance3).not_to eq(instance)
+    expect(instance3).to eq(instance2)
   end
 end

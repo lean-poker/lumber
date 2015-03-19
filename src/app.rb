@@ -4,9 +4,15 @@ require 'json'
 
 require_relative 'log_store'
 require_relative 'zlib_compressor'
+require_relative 'lru_cache'
+require_relative 'file_permanent_store'
 
 configure do
-  LogStore.instance.compressor = ZlibCompressor.new
+  log_dir = "#{__dir__}/../logs"
+  FileUtils.mkpath log_dir
+  lru_cache = LRUCache.new FilePermanentStore.new(log_dir)
+
+  LogStore.new_instance ZlibCompressor.new, lru_cache
 end
 
 post "/logs/*" do
