@@ -16,7 +16,8 @@ class FilePermanentStore
   end
 
   def retrieve(key)
-    File.read file_name(key)
+    file_name = file_name(key)
+    File.read file_name if File.exists? file_name
   end
 
   def keys

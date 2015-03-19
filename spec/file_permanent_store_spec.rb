@@ -17,6 +17,10 @@ RSpec.describe 'FilePermanentStore' do
     expect(@store.retrieve 'a').to eq('value')
   end
 
+  it 'should return nil for non-existing keys' do
+    expect(@store.retrieve 'non-existing').to eq(nil)
+  end
+
   it 'should be able to enumerate and retrieve all existing keys' do
     @store.store 'old-key', 'old-value'
     @store.store 'old-key', 'another-old-value'
