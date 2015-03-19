@@ -52,6 +52,17 @@ RSpec.describe 'LogStore' do
     expect(@store.list).to eq(%w(a k z))
   end
 
+  it 'should use passed cache to store values' do
+    cache = double('cache')
+    expect(cache).to receive(:has_key?).with('key').and_return(true)
+    expect(cache).to receive(:get).with('key').and_return('another-value')
+    expect(cache).to receive(:put).with('key', 'value')
+
+    @store = LogStore.new LogStoreDefaultCompressor.new, cache
+    @store.put 'key', 'value'
+    expect(@store.get 'key').to eq('another-value')
+  end
+
   it 'should support compressors' do
     compressor = double('compressor')
     expect(compressor).to receive(:compress).once.with('log entry').and_return('lgntry')

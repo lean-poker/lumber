@@ -38,9 +38,23 @@ class LRUCache
       return entry.value
     end
 
-    entry = Entry.new @storage.retrieve key
-    @cache[key] = entry
-    entry.value
+    value = @storage.retrieve key
+
+    if value
+      entry = Entry.new value
+      @cache[key] = entry
+      entry.value
+    end
+
+    value
+  end
+
+  def keys
+    @storage.keys
+  end
+
+  def has_key?(key)
+    @storage.has_key? key
   end
 
   private

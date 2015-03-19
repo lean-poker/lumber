@@ -4,7 +4,7 @@ class FilePermanentStore
   def initialize(dir)
     @dir = dir
     load_keys
-    @index_file = File.open "#{@dir}/index", 'w'
+    @index_file = File.open "#{@dir}/index", 'a+'
   end
 
   def store(key, value)
@@ -22,6 +22,10 @@ class FilePermanentStore
 
   def keys
     @keys.keys
+  end
+
+  def has_key?(key)
+    @keys.has_key? key
   end
 
   private

@@ -15,6 +15,26 @@ RSpec.describe 'LRUCache' do
     @cache.put 'b', '2'
   end
 
+  it 'should return nil for non-existing' do
+    expect(@storage).to receive(:retrieve).with('no-such-key').and_return(nil)
+
+    expect(@cache.get 'no-such-key').to eq(nil)
+  end
+
+  it 'should be able to provide information about keys' do
+    allow(@storage).to receive(:store)
+    expect(@storage).to receive(:has_key?).with('existing').and_return(true)
+    expect(@storage).to receive(:has_key?).with('non-existing').and_return(false)
+    expect(@storage).to receive(:keys).and_return(%w(existing another))
+
+    @cache.put 'existing', '1'
+    @cache.put 'another', '2'
+
+    expect(@cache.keys).to eq(%w(existing another))
+    expect(@cache.has_key? 'existing').to eq(true)
+    expect(@cache.has_key? 'non-existing').to eq(false)
+  end
+
   it 'should not read from storage when values are cached' do
     allow(@storage).to receive(:store).once
     expect(@storage).to receive(:retrieve).never

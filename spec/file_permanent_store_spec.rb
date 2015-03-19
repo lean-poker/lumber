@@ -28,6 +28,8 @@ RSpec.describe 'FilePermanentStore' do
     new_store = FilePermanentStore.new @temp_dir
     new_store.store 'new-key', 'new-value'
 
+    expect(new_store.has_key? 'old-key').to eq(true)
+    expect(new_store.has_key? 'no-key').to eq(false)
     expect(new_store.keys).to eq(%w(old-key new-key))
     expect(new_store.retrieve 'old-key').to eq('another-old-value')
   end

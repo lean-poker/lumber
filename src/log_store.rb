@@ -3,27 +3,25 @@ class LogStore
   attr_accessor :compressor, :cache
 
   def initialize(compressor = nil, cache = nil)
-    @values = Hash.new ''
-
     @compressor = compressor || LogStoreDefaultCompressor.new
     @cache = cache || LogStoreDefaultCache.new
   end
 
   def get(key)
-    @values.has_key?(key.to_s) ? @compressor.decompress(@values[key.to_s]) : nil
+    @cache.has_key?(key.to_s) ? @compressor.decompress(@cache.get key.to_s) : nil
   end
 
   def put(key, value)
-    @values[key.to_s] = @compressor.compress(value)
+    cache.put key.to_s, @compressor.compress(value)
   end
 
   def append(key, value)
-    @values[key.to_s] = @compressor.compress(@compressor.decompress(@values[key.to_s]) + value)
+    @cache.put key.to_s, @compressor.compress(@compressor.decompress(@cache.get(key.to_s) || '') + value)
   end
 
   def list(key = '')
     prefix = key.length == 0 ? '' : "#{key}/"
-    @values.keys.select{ |k| k.start_with? prefix }.map do |k|
+    @cache.keys.select{ |k| k.start_with? prefix }.map do |k|
       rel_path = k.gsub(/^#{prefix}/, '')
       rel_path[0..(rel_path.index('/') || 0) - 1]
     end.sort.uniq
@@ -53,12 +51,20 @@ class LogStoreDefaultCache
     @cache = Hash.new
   end
 
-  def store(key, value)
+  def put(key, value)
     @cache[key] = value
   end
 
-  def retrieve(key)
-    return @cache[key] if @cache.has_key? key
+  def get(key)
+    return @cache[key] if has_key? key
     nil
+  end
+
+  def has_key?(key)
+    @cache.has_key? key
+  end
+
+  def keys
+    @cache.keys
   end
 end
