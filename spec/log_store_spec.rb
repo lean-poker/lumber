@@ -34,13 +34,6 @@ RSpec.describe 'LogStore' do
     expect(@store.get :another_test_key).to eq('value')
   end
 
-  it 'should provide an instance' do
-    instance = LogStore.instance
-    expect(instance).not_to eq(nil)
-    expect(instance).to eq(LogStore.instance)
-    instance.append 'shit', 'shit'
-  end
-
   it 'should be able to list entries' do
     @store.put 'my/logs/1', 'test_log'
     @store.put 'my/logs/2', 'another_test_log'
@@ -69,5 +62,22 @@ RSpec.describe 'LogStore' do
     @store.put 'a', 'log entry'
     @store.append 'a', ' appended'
     @store.get 'a'
+  end
+
+  it 'should provide an instance' do
+    instance = LogStore.instance
+    expect(instance).not_to eq(nil)
+    expect(instance).to eq(LogStore.instance)
+    instance.append 'shit', 'shit'
+  end
+
+  it 'should be able to replace default instance' do
+    instance = LogStore.instance
+    instance2 = LogStore.new_instance nil, nil
+    instance3 = LogStore.instance
+
+    expect(instance2).not_to eq(instance)
+    expect(instance3).not_to eq(instance)
+    expect(instance3).to eq(instance2)
   end
 end

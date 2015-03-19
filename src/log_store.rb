@@ -1,11 +1,12 @@
 
 class LogStore
-  attr_accessor :compressor
+  attr_accessor :compressor, :cache
 
-  def initialize(compressor = nil)
+  def initialize(compressor = nil, cache = nil)
     @values = Hash.new ''
 
     @compressor = compressor || LogStoreDefaultCompressor.new
+    @cache = cache || LogStoreDefaultCache.new
   end
 
   def get(key)
@@ -31,6 +32,10 @@ class LogStore
   def self.instance
     @instance ||= LogStore.new
   end
+
+  def self.new_instance(compressor = nil, cache = nil)
+    @instance = LogStore.new compressor, cache
+  end
 end
 
 class LogStoreDefaultCompressor
@@ -40,5 +45,20 @@ class LogStoreDefaultCompressor
 
   def decompress(value)
     value
+  end
+end
+
+class LogStoreDefaultCache
+  def initialize
+    @cache = Hash.new
+  end
+
+  def store(key, value)
+    @cache[key] = value
+  end
+
+  def retrieve(key)
+    return @cache[key] if @cache.has_key? key
+    nil
   end
 end
