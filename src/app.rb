@@ -19,7 +19,9 @@ post "/logs/*" do
   path = params[:splat][0]
   data = request.body.read
 
-  LogStore.instance.append path, data
+  time = Time.at (Time.new.to_i / 300).floor * 300
+  date = time.strftime '%FT%R'
+  LogStore.instance.append "#{path}/#{date}", data
   ''
 end
 
