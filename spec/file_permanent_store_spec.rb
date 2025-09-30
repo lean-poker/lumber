@@ -1,4 +1,6 @@
 require 'rspec'
+require 'tmpdir'
+require 'fileutils'
 require_relative '../src/file_permanent_store'
 
 RSpec.describe 'FilePermanentStore' do

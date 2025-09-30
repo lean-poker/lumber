@@ -17,7 +17,7 @@ class FilePermanentStore
 
   def retrieve(key)
     file_name = file_name(key)
-    File.read file_name if File.exists? file_name
+    File.read file_name if File.exist? file_name
   end
 
   def keys
@@ -38,7 +38,7 @@ class FilePermanentStore
     index_file_name = "#{@dir}/index"
     @keys = Hash.new
 
-    if File.exists? index_file_name
+    if File.exist? index_file_name
       File.open(index_file_name).each_line do |line|
         @keys[line.strip] = true
       end
