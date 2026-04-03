@@ -6,7 +6,7 @@ gem 'dotenv'
 gem 'json'
 gem 'sinatra', '>= 4.1.0'
 gem 'puma', '>= 6.4.3'
-gem 'rack', '>= 2.2.18'
+gem 'rack', '>= 3.2.6'
 
 group :development do
   gem 'rerun'
